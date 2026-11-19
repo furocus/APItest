@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "start": "node dist/server.js"
-  },
+  "typecheck": "tsc --noEmit",
+  "build": "prisma generate --config ./prisma7.config.ts && tsc",
+  "start": "node dist/server.js"
+},
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
