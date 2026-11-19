@@ -1,12 +1,26 @@
 import express from "express";
 import type { ErrorRequestHandler } from "express";
-import { getUserHandler } from "./function.js";
+import { signupHandler, getUserHandler, updateUserHandler, closeAccountHandler } from "./function.js";
 
 const app = express();
 
-app.get("/users/:user_id", getUserHandler);
+app.use(express.json());
+app.use((_req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+});
 
-const handleError: ErrorRequestHandler = (_error, _req, res, _next) => {
+app.post("/signup", signupHandler);
+app.get("/users/:user_id", getUserHandler);
+app.patch("/users/:user_id", updateUserHandler);
+app.post("/close", closeAccountHandler);
+
+const handleError: ErrorRequestHandler = (error: unknown, _req, res, _next) => {
+    if (error instanceof SyntaxError && "status" in error && error.status === 400) {
+        res.status(400).json({ message: "Invalid JSON" });
+        return;
+    }
+    console.error("API request failed");
     res.status(500).json({ message: "Internal server error"});
 };
 
